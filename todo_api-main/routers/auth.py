@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from pydantic import BaseModel, EmailStr, constr
 from starlette import status
-from schemas import UserCreate, UserOut, UserLogin, Token
+from schemas import UserSignup, UserResponse, UserLogin, Token
 
 from models.models import Users
 from passlib.context import CryptContext

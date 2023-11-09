@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from db.database import get_db
 from schemas import PaymentRequest, TransactionResponse, BalanceResponse
-from models.models import Transaction as TransactionModel, User as UserModel
+from models.models import Transaction as TransactionModel, Users as UserModel
 from typing import List
 
 router = APIRouter()
