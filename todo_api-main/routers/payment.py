@@ -7,20 +7,10 @@ from typing import List
 
 router = APIRouter()
 
-def process_payment(card_number: str, expiry_date: str, cvv: int, amount: float) -> bool:
-    # Payment gateway communication logic, fake for now
-    # check card info，execute payment，return result
-    return True
-
 @router.post("/payments/charge", response_model=TransactionResponse)
 async def charge_payment(payment_request: PaymentRequest, db: Session = Depends(get_db)):
-    # suppose process_payment is true
-    payment_success = process_payment(
-        card_number=payment_request.card_number,
-        expiry_date=payment_request.expiry_date,
-        cvv=payment_request.cvv,
-        amount=payment_request.amount
-    )
+    # suppose the payment process is successful
+    payment_success = True
 
     if not payment_success:
         # failed payment respond with error
@@ -28,11 +18,8 @@ async def charge_payment(payment_request: PaymentRequest, db: Session = Depends(
 
     # create transaction record
     new_transaction = TransactionModel(
-        card_number=payment_request.card_number,
-        expiry_date=payment_request.expiry_date,
-        cvv=payment_request.cvv,
-        amount=payment_request.amount,
         user_id=payment_request.user_id,
+        amount=payment_request.amount,
         status="processed" if payment_success else "failed"
     )
     
@@ -62,7 +49,7 @@ async def get_balance(user_id: int, db: Session = Depends(get_db)):
 
 @router.get("/payments/transactions", response_model=List[TransactionResponse])
 async def get_transactions(user_id: int, db: Session = Depends(get_db)):
-    # search and return all transaction of users
+    # search and return all transactions of user
     transactions = db.query(TransactionModel).filter(
         TransactionModel.user_id == user_id
     ).all()

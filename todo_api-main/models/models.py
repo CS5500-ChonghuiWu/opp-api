@@ -30,15 +30,11 @@ class Todos(Base):
 class Transaction(Base):
     __tablename__ = 'transactions'
 
-    id = Column(Integer, primary_key=True, index=True)
-    card_number = Column(String, index=True)
-    expiry_date = Column(DateTime, index=True)
-    cvv = Column(Integer)
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer)
     amount = Column(Float)
-    user_id = Column(Integer, ForeignKey('users.id'))
-    status = Column(String, default='pending')
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    status = Column(String)
+    date = Column(DateTime)
 
 class GenericObject(Base):
     __tablename__ = 'generics'
