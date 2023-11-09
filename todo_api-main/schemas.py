@@ -22,7 +22,7 @@ class Token(BaseModel):
 
 class PaymentRequest(BaseModel):
     card_number: str
-    expiry_date: str
+    expiry_date: datetime
     cvv: int
     amount: float
     user_id: int
@@ -33,10 +33,13 @@ class PaymentRequest(BaseModel):
         assert len(value) in [15, 16], 'Card number must be 15 or 16 digits long'
         return value
 
-    @validator('expiry_date')
+    @validator('expiry_date', pre=True)
     def validate_expiry_date(cls, value):
-        # Ensure the card is not expired
-        assert value > datetime.now(), 'Card is expired'
+        if isinstance(value, str):
+            try:
+                return datetime.fromisoformat(value)
+            except ValueError:
+                raise ValueError(f"Cannot parse {value} as datetime")
         return value
 
     @validator('amount')
