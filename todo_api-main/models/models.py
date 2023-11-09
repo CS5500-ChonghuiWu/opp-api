@@ -1,5 +1,6 @@
+import datetime
 from db.database import Base
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Float
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Float, DateTime
 
 
 class Users(Base):
@@ -14,6 +15,7 @@ class Users(Base):
     is_active = Column(Boolean, default=True)
     role = Column(String)
     phone_number = Column(String)
+    business_name = Column(String, index=True)
 
 class Todos(Base):
     __tablename__ = 'todos'
@@ -25,6 +27,18 @@ class Todos(Base):
     complete = Column(Boolean, default=False)
     owner_id = Column(Integer, ForeignKey("users.id"))
 
+class Transaction(Base):
+    __tablename__ = 'transactions'
+
+    id = Column(Integer, primary_key=True, index=True)
+    card_number = Column(String, index=True)
+    expiry_date = Column(DateTime, index=True)
+    cvv = Column(Integer)
+    amount = Column(Float)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    status = Column(String, default='pending')
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 class GenericObject(Base):
     __tablename__ = 'generics'

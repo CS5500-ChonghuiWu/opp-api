@@ -3,6 +3,8 @@ from fastapi import FastAPI
 from models import models
 from db.database import engine
 from routers import auth, todos, admin
+from routers.payment import router as payment_router
+from routers.generics import router as generics_router
 
 # application
 app = FastAPI()
@@ -18,6 +20,5 @@ models.Base.metadata.create_all(bind=engine)
 app.include_router(auth.router)
 app.include_router(todos.router)
 app.include_router(admin.router)
-
-from routers.generics import router as generics_router
 app.include_router(generics_router)
+app.include_router(payment_router)

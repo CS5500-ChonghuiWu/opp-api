@@ -2,8 +2,9 @@ from datetime import timedelta, datetime
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, constr
 from starlette import status
+from schemas import UserCreate, UserOut, UserLogin, Token
 
 from models.models import Users
 from passlib.context import CryptContext
@@ -20,12 +21,22 @@ from dotenv import load_dotenv
 load_dotenv()  # take environment variables from .env.
 
 # These are used to create the signature for a JWT
-SECRET_KEY = ''
-ALGORITHM = ''
+SECRET_KEY = os.getenv('SECRET_KEY')
+ALGORITHM = os.getenv('ALGORITHM')
 
 bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl='auth/token')
 
+class UserSignup(BaseModel):
+    username: constr(min_length=3, max_length=50)
+    password: constr(min_length=6)
+    email: EmailStr
+    business_name: str
+
+class UserOut(BaseModel):
+    user_id: int
+    username: str
+    business_name: str
 
 def get_db():
     db = SessionLocal()
@@ -52,20 +63,42 @@ class Token(BaseModel):
     token_type: str
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post("/signup", response_model=UserOut, status_code=status.HTTP_201_CREATED)
 async def create_user(db: db_dependency, create_user_request: CreateUserRequest):
-    create_user_model = Users(
+    # check if the user already exists
+    existing_user = db.query(Users).filter(
+        (Users.username == create_user_request.username) | 
+        (Users.email == create_user_request.email)
+    ).first()
+    if existing_user:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Username or email already exists."
+        )
+    
+    hashed_password = bcrypt_context.hash(create_user_request.password)
+
+    # create new user
+    new_user = Users(
         email=create_user_request.email,
         username=create_user_request.username,
-        first_name=create_user_request.first_name,
-        surname=create_user_request.surname,
+        hashed_password=hashed_password,
+        is_active=True,
         role=create_user_request.role,
-        hashed_password=bcrypt_context.hash(create_user_request.password),
-        is_active=True
+        # added business_name
+        business_name=create_user_request.business_name if hasattr(create_user_request, 'business_name') else None
     )
 
-    db.add(create_user_model)
+    db.add(new_user)
     db.commit()
+    db.refresh(new_user)
+
+    # return user info
+    return {
+        "user_id": new_user.id,
+        "username": new_user.username,
+        "business_name": new_user.business_name
+    }
 
 
 @router.post("/token/", response_model=Token)
