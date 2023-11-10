@@ -86,7 +86,8 @@ async def create_user(db: db_dependency, create_user_request: CreateUserRequest)
         is_active=True,
         role=create_user_request.role,
         # added business_name
-        business_name=create_user_request.business_name if hasattr(create_user_request, 'business_name') else None
+        business_name=create_user_request.business_name if hasattr(create_user_request, 'business_name') else "None",
+        user_id = 1,
     )
 
     db.add(new_user)
