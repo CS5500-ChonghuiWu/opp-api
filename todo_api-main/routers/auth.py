@@ -12,6 +12,7 @@ from db.database import SessionLocal
 from typing import Annotated, Any
 from sqlalchemy.orm import Session
 from jose import jwt, JWTError
+import uuid
 
 router = APIRouter(prefix='/auth', tags=['auth'])
 
@@ -34,9 +35,8 @@ class UserSignup(BaseModel):
     business_name: str
 
 class UserOut(BaseModel):
-    user_id: int
+    user_id: str
     username: str
-    business_name: str
 
 def get_db():
     db = SessionLocal()
@@ -86,8 +86,7 @@ async def create_user(db: db_dependency, create_user_request: CreateUserRequest)
         is_active=True,
         role=create_user_request.role,
         # added business_name
-        business_name=create_user_request.business_name if hasattr(create_user_request, 'business_name') else "None",
-        user_id = 1,
+        id = uuid.uuid4().hex,
     )
 
     db.add(new_user)
@@ -98,7 +97,6 @@ async def create_user(db: db_dependency, create_user_request: CreateUserRequest)
     return {
         "user_id": new_user.id,
         "username": new_user.username,
-        "business_name": new_user.business_name
     }
 
 

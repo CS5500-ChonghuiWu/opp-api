@@ -38,7 +38,7 @@ async def charge_payment(payment_request: PaymentRequest, db: Session = Depends(
 
 
 @router.get("/payments/balance", response_model=BalanceResponse)
-async def get_balance(user_id: int, db: Session = Depends(get_db)):
+async def get_balance(user_id: str, db: Session = Depends(get_db)):
     # calculate and return current balance
     transactions = db.query(TransactionModel).filter(
         TransactionModel.user_id == user_id,
@@ -48,7 +48,7 @@ async def get_balance(user_id: int, db: Session = Depends(get_db)):
     return BalanceResponse(total_balance=total_balance)
 
 @router.get("/payments/transactions", response_model=List[TransactionResponse])
-async def get_transactions(user_id: int, db: Session = Depends(get_db)):
+async def get_transactions(user_id: str, db: Session = Depends(get_db)):
     # search and return all transactions of user
     transactions = db.query(TransactionModel).filter(
         TransactionModel.user_id == user_id

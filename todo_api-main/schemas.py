@@ -25,7 +25,7 @@ class PaymentRequest(BaseModel):
     expiry_date: datetime
     cvv: int
     amount: float
-    user_id: int
+    user_id: str
 
     @validator('card_number')
     def validate_card_number(cls, value):
@@ -50,7 +50,7 @@ class PaymentRequest(BaseModel):
 
 class TransactionResponse(BaseModel):
     transaction_id: int
-    user_id: int
+    user_id: str
     amount: float
     status: str
 
