@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from routers.helpers import validate_card, check_funds_and_fraud
 from db.database import get_db
 from schemas import PaymentRequest, TransactionResponse, BalanceResponse
 from models.models import Transaction as TransactionModel, Users as UserModel
@@ -9,7 +10,19 @@ router = APIRouter()
 
 @router.post("/payments/charge", response_model=TransactionResponse)
 async def charge_payment(payment_request: PaymentRequest, db: Session = Depends(get_db)):
-    # suppose the payment process is successful
+    # Validate the card
+    card_validation_result = await validate_card(payment_request.card_number)
+
+    if card_validation_result.get("success") == "false":
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Card validation failed")
+
+    # Check funds and fraud
+    funds_and_fraud_result = await check_funds_and_fraud(payment_request.card_number, payment_request.amount)
+
+    if funds_and_fraud_result.get("success") == "false":
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Funds and fraud check failed")
+
+    # Payment process is successful
     payment_success = True
 
     if not payment_success:
