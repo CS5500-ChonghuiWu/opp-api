@@ -23,7 +23,7 @@ class Token(BaseModel):
 class PaymentRequest(BaseModel):
     card_number: str
     expiry_date: datetime
-    cvv: int
+    cvv: str
     amount: float
     user_id: str
 
