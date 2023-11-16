@@ -1,9 +1,8 @@
 # Quick start
-test
+test1
 ## Prerequisites
 * [Install `sqlite3`](https://www.servermania.com/kb/articles/install-sqlite)
   * Hint: MacOS already has `sqlite3` installed
-
 ## Installation
 
 * Create a virtual environment
