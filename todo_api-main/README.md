@@ -1,5 +1,6 @@
 # Quick start
-test1
+python3 main.py
+
 ## Prerequisites
 * [Install `sqlite3`](https://www.servermania.com/kb/articles/install-sqlite)
   * Hint: MacOS already has `sqlite3` installed
@@ -19,6 +20,12 @@ test1
 * Open the following URL on a browser of your choice: `http://127.0.0.1:8000/docs`
 * Since all the API's are protected, you need to authenicate and authorize yourself. So create a user as the very first thing you do.
 
+## Docker run
+
+* Install docker desktop
+* run docker build -t opp-api .
+* run docker run -d --name oppcontainer -p 80:80 opp-api
+* Check the api at http://127.0.0.1/docs.
 
 # Development
 
