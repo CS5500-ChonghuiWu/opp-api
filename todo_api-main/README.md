@@ -7,7 +7,7 @@ python3 main.py
 ## Installation
 
 * Create a virtual environment
-* Activate the virtual environment
+* Activate your virtual environment
 * Install the ['required' dependencies](./requirements.txt). You can install each of the dependencies individually, but you can also use [this](https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-r).
 * Open a terminal to the root of this repo and run the following command:
   * `uvicorn main:app --reload`
