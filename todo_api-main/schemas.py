@@ -47,6 +47,14 @@ class PaymentRequest(BaseModel):
         # Ensure the amount is positive
         assert value > 0, 'Amount must be positive'
         return value
+    
+    @validator('cvv')
+    def validate_cvv(cls, value):
+        if not value.isdigit():
+            raise ValueError('CVV must contain only digits')
+        if not (len(value) == 3 or len(value) == 4):
+            raise ValueError('CVV must be 3 or 4 digits long')
+        return value
 
 class TransactionResponse(BaseModel):
     transaction_id: int

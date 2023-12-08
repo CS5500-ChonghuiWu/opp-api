@@ -5,6 +5,7 @@ from db.database import get_db
 from schemas import PaymentRequest, TransactionResponse, BalanceResponse
 from models.models import Transaction as TransactionModel, Users as UserModel
 from typing import List
+from datetime import datetime
 
 router = APIRouter()
 
@@ -22,6 +23,8 @@ async def charge_payment(payment_request: PaymentRequest, db: Session = Depends(
     if funds_and_fraud_result.get("success") == "false":
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Funds and fraud check failed")
 
+    if payment_request.expiry_date < datetime.now():
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Card expired")
     # Payment process is successful
     payment_success = True
 

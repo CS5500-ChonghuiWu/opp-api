@@ -50,7 +50,7 @@ db_dependency = Annotated[Session, Depends(get_db)]
 
 
 class CreateUserRequest(BaseModel):
-    email: str
+    email: EmailStr
     username: str
     first_name: str
     surname: str
