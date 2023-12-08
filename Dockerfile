@@ -13,4 +13,4 @@ RUN pip install httpx
 COPY ./todo_api-main /code
 
 # 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
